@@ -1,4 +1,6 @@
 import { sound } from "../data/sound.js";
+import Board from "./board.js";
+import End from "./end.js";
 import Home from "./home.js";
 
 const Game = (_ => {
@@ -51,13 +53,19 @@ const Game = (_ => {
     const isGameOver = _ => {
         if(hasWon()) {
             sound.win.play();
-            alert('win');
-            Home.init();
+            End.setState({
+                chosenWord,
+                result: 'win'
+            });
+            End.render();
         }
         if(hasLost()) {
             sound.lose.play();
-            alert('lost');
-            Home.init();
+            End.setState({
+                chosenWord,
+                result: 'lose'
+            });
+            End.render();
         }
     }
 
@@ -70,6 +78,7 @@ const Game = (_ => {
             updateGuessingWord(guess);
         } else {
             lives--;
+            Board.setLives(lives);
         }
         render();
         isGameOver();
@@ -93,7 +102,7 @@ const Game = (_ => {
         let markup = `
             <p class="hangman__stats">Lives: <span class="hangman__lives">${lives}</span></p>
             <h1 class="hangman__title">Hangman</h1>
-            <canvas class="hangman__board"></canvas>
+            <canvas class="hangman__board" height="155px"></canvas>
             <div class="hangman__word">
                 ${guessingWord.join('')}
             </div>
@@ -113,6 +122,7 @@ const Game = (_ => {
         lives = 7;
         showInitPage();
         listeners();
+        Board.init();
     }
 
     return { init }
